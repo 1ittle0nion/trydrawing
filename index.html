@@ -3,74 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>文字排版生成器 V2</title>
+  <title>文字排版生成器 V3</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     :root {
-      --bg: #0b0c0f;
+      --bg: #090a0d;
       --panel: rgba(18, 19, 24, 0.92);
       --card: rgba(255, 255, 255, 0.055);
       --line: rgba(255, 255, 255, 0.13);
       --line-strong: rgba(255, 255, 255, 0.28);
-      --text: #f6f2ea;
-      --muted: rgba(246, 242, 234, 0.62);
-      --weak: rgba(246, 242, 234, 0.38);
-      --gold: #e7c86f;
+      --text: #f7f2e9;
+      --muted: rgba(247, 242, 233, 0.62);
+      --weak: rgba(247, 242, 233, 0.38);
+      --gold: #e8c96f;
       --blue: #9db8ff;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 15% 10%, rgba(231, 200, 111, 0.15), transparent 28%),
-        radial-gradient(circle at 78% 20%, rgba(157, 184, 255, 0.16), transparent 30%),
-        radial-gradient(circle at 52% 85%, rgba(255, 255, 255, 0.06), transparent 30%),
+        radial-gradient(circle at 16% 10%, rgba(232, 201, 111, 0.15), transparent 30%),
+        radial-gradient(circle at 80% 18%, rgba(157, 184, 255, 0.16), transparent 32%),
         var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
-      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
     }
 
     .app {
-      width: 100%;
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 410px minmax(0, 1fr);
+      grid-template-columns: 400px 1fr;
     }
 
     .sidebar {
       height: 100vh;
       overflow-y: auto;
-      padding: 28px;
+      padding: 26px;
       border-right: 1px solid var(--line);
-      background: rgba(8, 9, 12, 0.72);
-      backdrop-filter: blur(22px);
+      background: rgba(8, 9, 12, 0.75);
+      backdrop-filter: blur(20px);
     }
 
-    .brand-row {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 18px;
     }
 
-    .logo-mark {
+    .logo {
       width: 42px;
       height: 42px;
       border-radius: 15px;
-      background: linear-gradient(135deg, rgba(231, 200, 111, 1), rgba(157, 184, 255, 0.9));
       display: grid;
       place-items: center;
-      color: #0b0c0f;
+      color: #111;
       font-weight: 900;
-      box-shadow: 0 12px 36px rgba(231, 200, 111, 0.18);
+      background: linear-gradient(135deg, #f4e7b5, var(--gold));
     }
 
     .eyebrow {
@@ -78,28 +72,27 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--weak);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     h1 {
       margin: 0;
       font-size: 24px;
-      letter-spacing: -0.02em;
-      line-height: 1.16;
+      line-height: 1.15;
     }
 
     .subtitle {
-      margin: 0 0 24px;
+      margin: 0 0 22px;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.65;
     }
 
     .section {
-      padding: 17px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
+      border-radius: 22px;
       background: var(--card);
+      padding: 16px;
       margin-bottom: 14px;
     }
 
@@ -107,224 +100,141 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 11px;
       gap: 10px;
-      margin-bottom: 12px;
     }
 
     .section-title strong {
       font-size: 13px;
       letter-spacing: 0.06em;
-      color: rgba(246, 242, 234, 0.88);
     }
 
-    .mini-note {
+    .note {
       font-size: 11px;
       color: var(--weak);
     }
 
     textarea {
       width: 100%;
-      min-height: 142px;
+      min-height: 130px;
       resize: vertical;
       border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      background: rgba(0, 0, 0, 0.24);
+      border-radius: 15px;
+      background: rgba(0, 0, 0, 0.26);
       color: var(--text);
       outline: none;
-      padding: 14px;
+      padding: 13px;
       font-size: 18px;
       line-height: 1.6;
-      transition: border-color 0.18s ease, background 0.18s ease;
     }
 
     textarea:focus {
       border-color: var(--line-strong);
-      background: rgba(0, 0, 0, 0.34);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .chip {
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--muted);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: 0.18s ease;
-    }
-
-    .chip:hover {
-      color: var(--text);
-      border-color: var(--line-strong);
-      transform: translateY(-1px);
-    }
-
-    .segmented {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
     }
 
     button, select, input {
       font: inherit;
     }
 
-    .pill-btn {
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--muted);
-      border-radius: var(--radius-md);
-      padding: 11px 12px;
-      cursor: pointer;
-      transition: 0.18s ease;
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 11px;
     }
 
-    .pill-btn:hover {
+    .chip {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .chip:hover {
+      color: var(--text);
+      border-color: var(--line-strong);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .segmented.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      border-radius: 14px;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.16s ease;
+    }
+
+    .pill:hover {
       border-color: var(--line-strong);
       color: var(--text);
     }
 
-    .pill-btn.active {
-      color: #101113;
+    .pill.active {
+      color: #111;
       background: var(--text);
       border-color: var(--text);
       font-weight: 700;
     }
 
-    .style-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .style-card {
-      position: relative;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      cursor: pointer;
-      transition: 0.18s ease;
-      overflow: hidden;
-      min-height: 76px;
-    }
-
-    .style-card:hover {
-      border-color: var(--line-strong);
-      transform: translateY(-1px);
-    }
-
-    .style-card.active {
-      border-color: rgba(231, 200, 111, 0.82);
-      box-shadow: inset 0 0 0 1px rgba(231, 200, 111, 0.25), 0 12px 38px rgba(231, 200, 111, 0.08);
-      background: rgba(231, 200, 111, 0.075);
-    }
-
-    .style-name {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .style-desc {
-      color: var(--weak);
-      font-size: 12px;
-      line-height: 1.35;
-      max-width: 68%;
-    }
-
-    .style-preview {
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      bottom: 10px;
-      width: 78px;
-      color: rgba(246, 242, 234, 0.58);
-      font-family: "Songti SC", "Noto Serif SC", serif;
-      pointer-events: none;
-    }
-
-    .preview-minimal {
-      font-size: 15px;
-      letter-spacing: 0.18em;
-      line-height: 1.9;
-    }
-
-    .preview-japanese {
-      writing-mode: vertical-rl;
-      font-size: 15px;
-      letter-spacing: 0.22em;
-    }
-
-    .preview-experimental span {
-      position: absolute;
-    }
-
-    .preview-poetic {
-      font-size: 13px;
-      line-height: 2.4;
-      opacity: 0.72;
-    }
-
     select {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      padding: 12px 13px;
-      background: rgba(0, 0, 0, 0.24);
+      border-radius: 14px;
+      padding: 11px 12px;
+      background: rgba(0,0,0,.26);
       color: var(--text);
       outline: none;
     }
 
     .color-row {
       display: grid;
-      grid-template-columns: 56px 1fr auto;
+      grid-template-columns: 54px 1fr auto;
       align-items: center;
       gap: 10px;
     }
 
     input[type="color"] {
-      width: 54px;
-      height: 42px;
-      padding: 0;
+      width: 52px;
+      height: 40px;
       border: 1px solid var(--line);
-      border-radius: 13px;
+      border-radius: 12px;
       background: transparent;
       cursor: pointer;
     }
 
-    .color-code {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .reset-btn {
+    .small-btn {
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255,255,255,.04);
       color: var(--muted);
-      padding: 9px 10px;
+      padding: 8px 10px;
       cursor: pointer;
     }
 
-    .range-row {
-      margin-top: 14px;
+    .range-block {
+      margin-top: 13px;
     }
 
     .range-label {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
       color: var(--muted);
-      margin-bottom: 7px;
+      font-size: 12px;
+      margin-bottom: 6px;
     }
 
     input[type="range"] {
@@ -332,64 +242,61 @@
       accent-color: var(--gold);
     }
 
-    .aid-card {
+    .help {
       border: 1px solid rgba(157, 184, 255, 0.22);
       background: rgba(157, 184, 255, 0.07);
-      border-radius: var(--radius-md);
+      border-radius: 16px;
       padding: 12px;
-      color: rgba(246, 242, 234, 0.7);
+      color: rgba(247,242,233,.7);
       font-size: 12px;
       line-height: 1.6;
     }
 
     .actions {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: 15px;
     }
 
     .primary {
       border: none;
-      border-radius: 18px;
+      border-radius: 17px;
       padding: 14px 16px;
       color: #111;
-      background: linear-gradient(135deg, #f7f1dc, #e7c86f);
+      background: linear-gradient(135deg, #fbf4dc, var(--gold));
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 14px 40px rgba(231, 200, 111, 0.18);
     }
 
     .secondary {
       border: 1px solid var(--line-strong);
-      border-radius: 18px;
+      border-radius: 17px;
       padding: 14px 16px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.055);
+      background: rgba(255,255,255,.055);
       font-weight: 700;
       cursor: pointer;
     }
 
     .workbench {
-      min-width: 0;
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
       padding: 24px;
       gap: 16px;
+      min-width: 0;
     }
 
     .topbar, .bottombar {
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(18, 19, 24, 0.58);
+      border-radius: 22px;
+      background: rgba(18,19,24,.62);
       backdrop-filter: blur(18px);
       padding: 12px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 18px 54px rgba(0, 0, 0, 0.18);
     }
 
     .badges {
@@ -404,19 +311,23 @@
       padding: 7px 10px;
       font-size: 12px;
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255,255,255,.04);
     }
 
     .badge.gold {
       color: var(--gold);
-      border-color: rgba(231, 200, 111, 0.3);
-      background: rgba(231, 200, 111, 0.07);
+      border-color: rgba(232,201,111,.32);
+      background: rgba(232,201,111,.08);
     }
 
     .stage {
-      min-height: 0;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: auto;
       border: 1px solid var(--line);
       border-radius: 30px;
+      padding: 28px;
       background:
         linear-gradient(45deg, rgba(255,255,255,.045) 25%, transparent 25%),
         linear-gradient(-45deg, rgba(255,255,255,.045) 25%, transparent 25%),
@@ -425,22 +336,13 @@
         rgba(255,255,255,.026);
       background-size: 28px 28px;
       background-position: 0 0, 0 14px, 14px -14px, -14px 0;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      overflow: auto;
-      position: relative;
-      box-shadow: var(--shadow);
+      box-shadow: 0 24px 80px rgba(0,0,0,.42);
     }
 
     .canvas-wrap {
       position: relative;
       width: fit-content;
       height: fit-content;
-      max-width: 100%;
-      max-height: 100%;
-      display: grid;
-      place-items: center;
     }
 
     canvas {
@@ -449,74 +351,43 @@
       max-height: 74vh;
       width: auto;
       height: auto;
-      filter: drop-shadow(0 26px 60px rgba(0, 0, 0, 0.28));
+      filter: drop-shadow(0 28px 64px rgba(0,0,0,.3));
     }
 
     .safe-frame {
       pointer-events: none;
       position: absolute;
       inset: 8%;
-      border: 1px dashed rgba(231, 200, 111, 0.34);
-      border-radius: 2px;
+      border: 1px dashed rgba(232,201,111,.35);
     }
 
-    .crosshair-x, .crosshair-y {
-      position: absolute;
+    .cross-x, .cross-y {
       pointer-events: none;
-      background: rgba(157, 184, 255, 0.22);
+      position: absolute;
+      background: rgba(157,184,255,.22);
     }
 
-    .crosshair-x {
-      height: 1px;
+    .cross-x {
       left: 0;
       right: 0;
       top: 50%;
+      height: 1px;
     }
 
-    .crosshair-y {
-      width: 1px;
+    .cross-y {
       top: 0;
       bottom: 0;
       left: 50%;
+      width: 1px;
     }
 
-    .corner-label {
-      position: absolute;
-      left: 12px;
-      top: 12px;
-      border: 1px solid rgba(255,255,255,.15);
-      background: rgba(0,0,0,.38);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 11px;
-      color: rgba(246,242,234,.66);
-      backdrop-filter: blur(10px);
-    }
-
-    .status-text {
+    .status {
       color: var(--weak);
       font-size: 12px;
       line-height: 1.5;
     }
 
-    .toggle-aid {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 8px 11px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .toggle-aid.active {
-      color: #101113;
-      background: var(--text);
-      border-color: var(--text);
-      font-weight: 700;
-    }
-
-    @media (max-width: 980px) {
+    @media (max-width: 960px) {
       .app {
         grid-template-columns: 1fr;
       }
@@ -549,20 +420,22 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="brand-row">
-        <div class="logo-mark">字</div>
+      <div class="brand">
+        <div class="logo">字</div>
         <div>
           <div class="eyebrow">Pure Frontend Tool</div>
-          <h1>文字排版生成器 V2</h1>
+          <h1>文字排版生成器 V3</h1>
         </div>
       </div>
 
-      <p class="subtitle">输入中文、日文或英文文字，自动生成具有设计感的排版，并一键导出透明背景 PNG。</p>
+      <p class="subtitle">
+        保留随机感，但让文字先服从对齐骨架。通过字距节奏、视觉停顿和重点字生成设计感。
+      </p>
 
       <section class="section">
         <div class="section-title">
           <strong>文本内容</strong>
-          <span class="mini-note">支持中 / 日 / 英混排</span>
+          <span class="note">中 / 日 / 英混排</span>
         </div>
 
         <textarea id="textInput">紅頭船
@@ -574,73 +447,52 @@ under the sun
           <button class="chip" data-sample="月落烏啼\n霜滿天\n江楓漁火">月落乌啼</button>
           <button class="chip" data-sample="東京夜行\n雨の街\nsilent neon">東京夜行</button>
           <button class="chip" data-sample="under the sun\nwe keep moving\nslowly">under the sun</button>
-          <button class="chip" data-sample="不要說話\n讓潮聲替我回答">不要说话</button>
         </div>
       </section>
 
       <section class="section">
         <div class="section-title">
           <strong>排版方向</strong>
-          <span class="mini-note">决定主要视觉流向</span>
+          <span class="note">主要流向</span>
         </div>
 
         <div class="segmented">
-          <button class="pill-btn active" data-direction="horizontal">横排</button>
-          <button class="pill-btn" data-direction="vertical">竖排</button>
+          <button class="pill active" data-direction="horizontal">横排</button>
+          <button class="pill" data-direction="vertical">竖排</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>对齐方式</strong>
+          <span class="note">先有骨架，再随机</span>
+        </div>
+
+        <div class="segmented three">
+          <button class="pill active" data-align="left">左对齐</button>
+          <button class="pill" data-align="center">居中</button>
+          <button class="pill" data-align="right">右对齐</button>
         </div>
       </section>
 
       <section class="section">
         <div class="section-title">
           <strong>视觉风格</strong>
-          <span class="mini-note">点击卡片切换</span>
+          <span class="note">整体倾向</span>
         </div>
 
-        <div class="style-grid">
-          <div class="style-card active" data-style="minimal">
-            <div class="style-name">极简杂志感</div>
-            <div class="style-desc">留白多、层级清晰，适合高级标题和海报主视觉。</div>
-            <div class="style-preview preview-minimal">静默<br>版式<br>NO.01</div>
-          </div>
-
-          <div class="style-card" data-style="japanese">
-            <div class="style-name">日式海报感</div>
-            <div class="style-desc">适合中文 / 日文竖排，字距更舒展，气质安静。</div>
-            <div class="style-preview preview-japanese">潮聲未遠</div>
-          </div>
-
-          <div class="style-card" data-style="experimental">
-            <div class="style-name">实验字体感</div>
-            <div class="style-desc">字号反差、错位、透明叠加更明显，更像艺术字体实验。</div>
-            <div class="style-preview preview-experimental">
-              <span style="font-size:28px;left:2px;top:0">形</span>
-              <span style="font-size:14px;left:42px;top:8px;opacity:.55">变</span>
-              <span style="font-size:20px;left:18px;top:38px;opacity:.72">声</span>
-            </div>
-          </div>
-
-          <div class="style-card" data-style="poetic">
-            <div class="style-name">诗意留白感</div>
-            <div class="style-desc">文字更分散、更轻，适合短句、诗句、情绪化文案。</div>
-            <div class="style-preview preview-poetic">月<br>&nbsp;&nbsp;落<br>&nbsp;&nbsp;&nbsp;&nbsp;远</div>
-          </div>
-
-          <div class="style-card" data-style="surprise">
-            <div class="style-name">随机惊喜</div>
-            <div class="style-desc">每次从所有风格中随机挑选一套规则，适合快速找灵感。</div>
-            <div class="style-preview preview-experimental">
-              <span style="font-size:15px;right:6px;top:2px">?</span>
-              <span style="font-size:30px;right:25px;top:20px">字</span>
-              <span style="font-size:12px;right:2px;bottom:0">random</span>
-            </div>
-          </div>
-        </div>
+        <select id="styleSelect">
+          <option value="minimal">极简杂志感</option>
+          <option value="japanese">日式海报感</option>
+          <option value="poetic">诗意留白感</option>
+          <option value="experimental">实验字体感</option>
+        </select>
       </section>
 
       <section class="section">
         <div class="section-title">
           <strong>画布比例</strong>
-          <span class="mini-note">导出尺寸</span>
+          <span class="note">导出尺寸</span>
         </div>
 
         <select id="canvasSelect">
@@ -653,51 +505,91 @@ under the sun
 
       <section class="section">
         <div class="section-title">
-          <strong>颜色与透明度</strong>
-          <span class="mini-note">默认白色</span>
+          <strong>排版节奏</strong>
+          <span class="note">重点改这里</span>
         </div>
 
-        <div class="color-row">
-          <input type="color" id="colorPicker" value="#ffffff" />
-          <div class="color-code" id="colorValue">#ffffff</div>
-          <button class="reset-btn" id="resetColorBtn">重置</button>
-        </div>
-
-        <div class="range-row">
+        <div class="range-block">
           <div class="range-label">
-            <span>基础透明度</span>
-            <span id="opacityValue">0.92</span>
+            <span>基础字距</span>
+            <span id="baseSpacingValue">18</span>
           </div>
-          <input id="opacityRange" type="range" min="0.2" max="1" step="0.01" value="0.92" />
+          <input id="baseSpacingRange" type="range" min="0" max="90" step="1" value="18" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>字距随机</span>
+            <span id="spacingRandomValue">38</span>
+          </div>
+          <input id="spacingRandomRange" type="range" min="0" max="140" step="1" value="38" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>视觉停顿</span>
+            <span id="pauseChanceValue">22%</span>
+          </div>
+          <input id="pauseChanceRange" type="range" min="0" max="60" step="1" value="22" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>重点字概率</span>
+            <span id="emphasisChanceValue">18%</span>
+          </div>
+          <input id="emphasisChanceRange" type="range" min="0" max="50" step="1" value="18" />
         </div>
       </section>
 
       <section class="section">
         <div class="section-title">
-          <strong>随机强度</strong>
-          <span class="mini-note">越高越实验</span>
+          <strong>视觉效果</strong>
+          <span class="note">默认克制</span>
         </div>
 
-        <div class="range-row">
-          <div class="range-label">
-            <span>模糊强度</span>
-            <span id="blurValue">1</span>
-          </div>
-          <input id="blurRange" type="range" min="0" max="10" step="1" value="1" />
+        <div class="color-row">
+          <input type="color" id="colorPicker" value="#ffffff" />
+          <div id="colorValue" class="note">#ffffff</div>
+          <button class="small-btn" id="resetColorBtn">重置</button>
         </div>
 
-        <div class="range-row">
+        <div class="range-block">
           <div class="range-label">
-            <span>旋转强度</span>
-            <span id="rotationValue">3°</span>
+            <span>透明度</span>
+            <span id="opacityValue">0.92</span>
           </div>
-          <input id="rotationRange" type="range" min="0" max="28" step="1" value="3" />
+          <input id="opacityRange" type="range" min="0.2" max="1" step="0.01" value="0.92" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>位置微扰</span>
+            <span id="jitterValue">8</span>
+          </div>
+          <input id="jitterRange" type="range" min="0" max="80" step="1" value="8" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>旋转</span>
+            <span id="rotationValue">0°</span>
+          </div>
+          <input id="rotationRange" type="range" min="0" max="24" step="1" value="0" />
+        </div>
+
+        <div class="range-block">
+          <div class="range-label">
+            <span>模糊</span>
+            <span id="blurValue">0</span>
+          </div>
+          <input id="blurRange" type="range" min="0" max="10" step="1" value="0" />
         </div>
       </section>
 
-      <div class="aid-card">
-        <strong>排版逻辑</strong><br />
-        系统会自动调整字号、位置、字距、透明度、模糊和旋转角度。每次点击生成都会得到不同结果，但会尽量保持可读性和视觉平衡。
+      <div class="help">
+        <strong>现在的逻辑：</strong><br />
+        文字会先沿着一条清晰的横线或竖线排好，再随机调整字距。某些字之间会被拉开，某些字会变大，但整体仍然保持对齐。
       </div>
 
       <div class="actions">
@@ -712,25 +604,22 @@ under the sun
           <span class="badge gold" id="sizeBadge">1080 × 1080</span>
           <span class="badge">透明背景导出</span>
           <span class="badge">棋盘格仅预览</span>
-          <span class="badge" id="modeBadge">横排 · 极简杂志感</span>
+          <span class="badge" id="modeBadge">横排 · 左对齐</span>
         </div>
-
-        <button class="toggle-aid active" id="toggleAidBtn">显示辅助线</button>
       </div>
 
       <section class="stage">
-        <div class="canvas-wrap" id="canvasWrap">
+        <div class="canvas-wrap">
           <canvas id="posterCanvas"></canvas>
-          <div class="safe-frame" id="safeFrame"></div>
-          <div class="crosshair-x" id="crosshairX"></div>
-          <div class="crosshair-y" id="crosshairY"></div>
-          <div class="corner-label" id="cornerLabel">安全边距 / 中心线</div>
+          <div class="safe-frame"></div>
+          <div class="cross-x"></div>
+          <div class="cross-y"></div>
         </div>
       </section>
 
       <div class="bottombar">
-        <div class="status-text" id="statusText">准备就绪。输入文字后点击“生成排版”。</div>
-        <div class="status-text">导出的 PNG 不包含棋盘格、辅助线和网页 UI。</div>
+        <div class="status" id="statusText">准备就绪。点击“生成排版”刷新结果。</div>
+        <div class="status">导出 PNG 不包含棋盘格、辅助线和网页 UI。</div>
       </div>
     </main>
   </div>
@@ -740,31 +629,46 @@ under the sun
     const ctx = canvas.getContext("2d");
 
     const textInput = document.getElementById("textInput");
+    const styleSelect = document.getElementById("styleSelect");
     const canvasSelect = document.getElementById("canvasSelect");
+
     const colorPicker = document.getElementById("colorPicker");
     const colorValue = document.getElementById("colorValue");
     const resetColorBtn = document.getElementById("resetColorBtn");
+
     const opacityRange = document.getElementById("opacityRange");
     const opacityValue = document.getElementById("opacityValue");
-    const blurRange = document.getElementById("blurRange");
-    const blurValue = document.getElementById("blurValue");
+
+    const baseSpacingRange = document.getElementById("baseSpacingRange");
+    const baseSpacingValue = document.getElementById("baseSpacingValue");
+
+    const spacingRandomRange = document.getElementById("spacingRandomRange");
+    const spacingRandomValue = document.getElementById("spacingRandomValue");
+
+    const pauseChanceRange = document.getElementById("pauseChanceRange");
+    const pauseChanceValue = document.getElementById("pauseChanceValue");
+
+    const emphasisChanceRange = document.getElementById("emphasisChanceRange");
+    const emphasisChanceValue = document.getElementById("emphasisChanceValue");
+
+    const jitterRange = document.getElementById("jitterRange");
+    const jitterValue = document.getElementById("jitterValue");
+
     const rotationRange = document.getElementById("rotationRange");
     const rotationValue = document.getElementById("rotationValue");
+
+    const blurRange = document.getElementById("blurRange");
+    const blurValue = document.getElementById("blurValue");
+
     const generateBtn = document.getElementById("generateBtn");
     const exportBtn = document.getElementById("exportBtn");
     const statusText = document.getElementById("statusText");
     const sizeBadge = document.getElementById("sizeBadge");
     const modeBadge = document.getElementById("modeBadge");
-    const toggleAidBtn = document.getElementById("toggleAidBtn");
-    const safeFrame = document.getElementById("safeFrame");
-    const crosshairX = document.getElementById("crosshairX");
-    const crosshairY = document.getElementById("crosshairY");
-    const cornerLabel = document.getElementById("cornerLabel");
 
     let direction = "horizontal";
-    let selectedStyle = "minimal";
+    let alignMode = "left";
     let currentLayout = [];
-    let aidsVisible = true;
 
     const fontStacks = [
       `"Songti SC", "Noto Serif SC", "SimSun", serif`,
@@ -774,46 +678,30 @@ under the sun
       `"Helvetica Neue", Arial, sans-serif`
     ];
 
-    const styleNames = {
-      minimal: "极简杂志感",
-      japanese: "日式海报感",
-      experimental: "实验字体感",
-      poetic: "诗意留白感",
-      surprise: "随机惊喜"
-    };
-
     const styleProfiles = {
       minimal: {
-        minSize: 34,
-        maxSize: 142,
-        opacityJitter: 0.15,
-        positionJitter: 0.13,
-        spacing: 1.12,
-        margin: 0.16
+        minSize: 42,
+        maxSize: 108,
+        lineGap: 1.25,
+        opacityJitter: 0.12
       },
       japanese: {
-        minSize: 38,
-        maxSize: 132,
-        opacityJitter: 0.24,
-        positionJitter: 0.22,
-        spacing: 1.42,
-        margin: 0.14
-      },
-      experimental: {
-        minSize: 22,
-        maxSize: 225,
-        opacityJitter: 0.45,
-        positionJitter: 0.48,
-        spacing: 0.92,
-        margin: 0.11
+        minSize: 44,
+        maxSize: 116,
+        lineGap: 1.45,
+        opacityJitter: 0.18
       },
       poetic: {
-        minSize: 28,
-        maxSize: 112,
-        opacityJitter: 0.34,
-        positionJitter: 0.42,
-        spacing: 1.68,
-        margin: 0.18
+        minSize: 34,
+        maxSize: 96,
+        lineGap: 1.85,
+        opacityJitter: 0.26
+      },
+      experimental: {
+        minSize: 30,
+        maxSize: 140,
+        lineGap: 1.18,
+        opacityJitter: 0.34
       }
     };
 
@@ -827,15 +715,6 @@ under the sun
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
-    }
-
-    function hexToRgba(hex, alpha) {
-      const clean = hex.replace("#", "");
-      const bigint = parseInt(clean, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
     function getCanvasSize() {
@@ -856,135 +735,171 @@ under the sun
       sizeBadge.textContent = `${size.width} × ${size.height}`;
     }
 
-    function getProfile() {
-      if (selectedStyle === "surprise") {
-        const keys = ["minimal", "japanese", "experimental", "poetic"];
-        return styleProfiles[pick(keys)];
-      }
-
-      return styleProfiles[selectedStyle];
+    function hexToRgba(hex, alpha) {
+      const clean = hex.replace("#", "");
+      const value = parseInt(clean, 16);
+      const r = (value >> 16) & 255;
+      const g = (value >> 8) & 255;
+      const b = value & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
-    function splitText(text) {
-      const lines = text
+    function splitLines(text) {
+      return text
         .split("\n")
         .map(line => line.trim())
         .filter(Boolean);
-
-      const tokens = [];
-
-      lines.forEach(line => {
-        const hasEnglishWords = /[a-zA-Z]/.test(line) && /\s/.test(line);
-
-        if (hasEnglishWords) {
-          line.split(/\s+/).forEach(word => {
-            if (word.trim()) tokens.push(word.trim());
-          });
-        } else {
-          Array.from(line).forEach(char => {
-            if (char.trim()) tokens.push(char);
-          });
-        }
-
-        tokens.push("\n");
-      });
-
-      return tokens.filter((token, index) => !(token === "\n" && index === tokens.length - 1));
     }
 
-    function createTextItem(token, x, y, profile) {
+    function splitLineToTokens(line) {
+      const hasEnglishWords = /[a-zA-Z]/.test(line) && /\s/.test(line);
+
+      if (hasEnglishWords) {
+        return line.split(/\s+/).filter(Boolean);
+      }
+
+      return Array.from(line).filter(char => char.trim());
+    }
+
+    function makeItem(text, x, y, profile) {
+      const emphasisChance = Number(emphasisChanceRange.value) / 100;
       const baseOpacity = Number(opacityRange.value);
-      const blurMax = Number(blurRange.value);
       const rotationMax = Number(rotationRange.value);
+      const blurMax = Number(blurRange.value);
+      const jitterMax = Number(jitterRange.value);
 
       let fontSize = random(profile.minSize, profile.maxSize);
 
-      if (Math.random() > 0.86) {
-        fontSize *= random(1.25, 1.9);
+      if (Math.random() < emphasisChance) {
+        fontSize *= random(1.45, 2.15);
       }
 
-      if (token.length > 3) {
+      if (text.length > 3) {
         fontSize *= 0.72;
       }
 
-      if (token.length > 8) {
-        fontSize *= 0.64;
+      if (text.length > 8) {
+        fontSize *= 0.62;
       }
 
-      const opacity = clamp(baseOpacity - random(0, profile.opacityJitter), 0.1, 1);
+      const opacity = clamp(baseOpacity - random(0, profile.opacityJitter), 0.12, 1);
       const rotation = random(-rotationMax, rotationMax) * Math.PI / 180;
-      const blur = Math.random() > 0.78 ? random(0, blurMax) : 0;
+      const blur = Math.random() > 0.82 ? random(0, blurMax) : 0;
 
       return {
-        text: token,
-        x,
-        y,
+        text,
+        x: x + random(-jitterMax, jitterMax),
+        y: y + random(-jitterMax, jitterMax),
         fontSize,
         opacity,
         rotation,
         blur,
         font: pick(fontStacks),
-        weight: Math.random() > 0.78 ? "700" : "400"
+        weight: Math.random() > 0.82 ? "700" : "400"
       };
     }
 
-    function generateHorizontal(tokens, profile) {
+    function getGap() {
+      const base = Number(baseSpacingRange.value);
+      const randomAmount = Number(spacingRandomRange.value);
+      const pauseChance = Number(pauseChanceRange.value) / 100;
+
+      let gap = base + random(-randomAmount * 0.35, randomAmount);
+
+      if (Math.random() < pauseChance) {
+        gap += random(70, 260);
+      }
+
+      return Math.max(0, gap);
+    }
+
+    function measureToken(token, fontSize, font, weight) {
+      ctx.font = `${weight} ${fontSize}px ${font}`;
+      return ctx.measureText(token).width;
+    }
+
+    function prepareLine(tokens, profile) {
+      const tempItems = tokens.map(token => {
+        const item = makeItem(token, 0, 0, profile);
+        item.width = measureToken(item.text, item.fontSize, item.font, item.weight);
+        item.gapAfter = getGap();
+        return item;
+      });
+
+      const totalWidth = tempItems.reduce((sum, item) => {
+        return sum + item.width + item.gapAfter;
+      }, 0);
+
+      return { items: tempItems, totalWidth };
+    }
+
+    function generateHorizontal(lines, profile) {
       const items = [];
-      const marginX = canvas.width * profile.margin;
-      const marginY = canvas.height * profile.margin;
+      const marginX = canvas.width * 0.12;
+      const startY = canvas.height * 0.22;
+      const baseLineHeight = profile.maxSize * profile.lineGap;
 
-      let x = marginX + random(-20, 80);
-      let y = random(marginY, canvas.height * 0.42);
-      let lineHeight = random(88, 178) * profile.spacing;
+      lines.forEach((line, lineIndex) => {
+        const tokens = splitLineToTokens(line);
+        const prepared = prepareLine(tokens, profile);
 
-      tokens.forEach(token => {
-        if (token === "\n" || x > canvas.width * (1 - profile.margin)) {
-          x = marginX + random(-45, 120);
-          y += lineHeight;
-          lineHeight = random(88, 178) * profile.spacing;
-          return;
+        let x;
+
+        if (alignMode === "center") {
+          x = (canvas.width - prepared.totalWidth) / 2;
+        } else if (alignMode === "right") {
+          x = canvas.width - marginX - prepared.totalWidth;
+        } else {
+          x = marginX;
         }
 
-        const item = createTextItem(
-          token,
-          x + random(-88, 88) * profile.positionJitter,
-          y + random(-96, 96) * profile.positionJitter,
-          profile
-        );
+        let y = startY + lineIndex * baseLineHeight;
 
-        items.push(item);
+        prepared.items.forEach(item => {
+          item.x = x;
+          item.y = y;
+          items.push(item);
 
-        ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
-        x += ctx.measureText(token).width + random(20, 88);
+          x += item.width + item.gapAfter;
+        });
       });
 
       return items;
     }
 
-    function generateVertical(tokens, profile) {
+    function generateVertical(lines, profile) {
       const items = [];
+      const marginY = canvas.height * 0.12;
+      const startX = canvas.width * 0.74;
+      const columnGap = profile.maxSize * profile.lineGap;
 
-      let x = canvas.width * (1 - profile.margin - 0.05);
-      let y = canvas.height * profile.margin;
-      let columnGap = random(88, 152) * profile.spacing;
+      lines.forEach((line, columnIndex) => {
+        const tokens = splitLineToTokens(line);
+        const prepared = prepareLine(tokens, profile);
 
-      tokens.forEach(token => {
-        if (token === "\n" || y > canvas.height * (1 - profile.margin)) {
-          y = canvas.height * profile.margin + random(-28, 72);
-          x -= columnGap;
-          columnGap = random(88, 152) * profile.spacing;
-          return;
+        let totalHeight = prepared.items.reduce((sum, item) => {
+          return sum + item.fontSize + item.gapAfter;
+        }, 0);
+
+        let y;
+
+        if (alignMode === "center") {
+          y = (canvas.height - totalHeight) / 2;
+        } else if (alignMode === "right") {
+          y = canvas.height - marginY - totalHeight;
+        } else {
+          y = marginY;
         }
 
-        const item = createTextItem(
-          token,
-          x + random(-88, 88) * profile.positionJitter,
-          y + random(-88, 88) * profile.positionJitter,
-          profile
-        );
+        let x = startX - columnIndex * columnGap;
 
-        items.push(item);
-        y += item.fontSize * random(0.82, 1.24);
+        prepared.items.forEach(item => {
+          item.x = x;
+          item.y = y;
+          items.push(item);
+
+          y += item.fontSize + item.gapAfter;
+        });
       });
 
       return items;
@@ -998,6 +913,7 @@ under the sun
 
         ctx.translate(item.x, item.y);
         ctx.rotate(item.rotation);
+
         ctx.globalAlpha = item.opacity;
         ctx.fillStyle = hexToRgba(colorPicker.value, item.opacity);
         ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
@@ -1005,12 +921,20 @@ under the sun
         ctx.filter = item.blur > 0 ? `blur(${item.blur}px)` : "none";
 
         ctx.fillText(item.text, 0, 0);
+
         ctx.restore();
       });
     }
 
     function updateModeBadge() {
-      modeBadge.textContent = `${direction === "horizontal" ? "横排" : "竖排"} · ${styleNames[selectedStyle]}`;
+      const directionName = direction === "horizontal" ? "横排" : "竖排";
+      const alignName = {
+        left: "左对齐",
+        center: "居中",
+        right: "右对齐"
+      }[alignMode];
+
+      modeBadge.textContent = `${directionName} · ${alignName}`;
     }
 
     function generateLayout() {
@@ -1023,25 +947,24 @@ under the sun
 
       resizeCanvas();
 
-      const tokens = splitText(text).slice(0, 160);
-      const profile = getProfile();
+      const profile = styleProfiles[styleSelect.value];
+      const lines = splitLines(text).slice(0, 16);
 
       currentLayout = direction === "vertical"
-        ? generateVertical(tokens, profile)
-        : generateHorizontal(tokens, profile);
+        ? generateVertical(lines, profile)
+        : generateHorizontal(lines, profile);
 
       drawLayout();
       updateModeBadge();
 
-      statusText.textContent = `已生成 ${currentLayout.length} 个文字元素。可以继续点击“生成排版”刷新结果。`;
+      statusText.textContent = `已生成 ${currentLayout.length} 个文字元素。结构保持对齐，字距与重点字随机变化。`;
     }
 
     function exportPNG() {
       const link = document.createElement("a");
-      link.download = "typography-layout-v2.png";
+      link.download = "typography-layout-v3.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-
       statusText.textContent = "已导出透明背景 PNG。";
     }
 
@@ -1054,18 +977,18 @@ under the sun
       });
     });
 
-    document.querySelectorAll("[data-style]").forEach(card => {
-      card.addEventListener("click", () => {
-        document.querySelectorAll("[data-style]").forEach(item => item.classList.remove("active"));
-        card.classList.add("active");
-        selectedStyle = card.dataset.style;
+    document.querySelectorAll("[data-align]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-align]").forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        alignMode = button.dataset.align;
         generateLayout();
       });
     });
 
-    document.querySelectorAll("[data-sample]").forEach(chip => {
-      chip.addEventListener("click", () => {
-        textInput.value = chip.dataset.sample;
+    document.querySelectorAll("[data-sample]").forEach(button => {
+      button.addEventListener("click", () => {
+        textInput.value = button.dataset.sample;
         generateLayout();
       });
     });
@@ -1081,33 +1004,28 @@ under the sun
       drawLayout();
     });
 
+    function bindRange(input, label, suffix = "") {
+      input.addEventListener("input", () => {
+        label.textContent = input.value + suffix;
+      });
+    }
+
+    bindRange(baseSpacingRange, baseSpacingValue);
+    bindRange(spacingRandomRange, spacingRandomValue);
+    bindRange(pauseChanceRange, pauseChanceValue, "%");
+    bindRange(emphasisChanceRange, emphasisChanceValue, "%");
+    bindRange(jitterRange, jitterValue);
+    bindRange(rotationRange, rotationValue, "°");
+    bindRange(blurRange, blurValue);
+
     opacityRange.addEventListener("input", () => {
       opacityValue.textContent = Number(opacityRange.value).toFixed(2);
-      generateLayout();
-    });
-
-    blurRange.addEventListener("input", () => {
-      blurValue.textContent = blurRange.value;
-    });
-
-    rotationRange.addEventListener("input", () => {
-      rotationValue.textContent = `${rotationRange.value}°`;
     });
 
     canvasSelect.addEventListener("change", generateLayout);
+    styleSelect.addEventListener("change", generateLayout);
     generateBtn.addEventListener("click", generateLayout);
     exportBtn.addEventListener("click", exportPNG);
-
-    toggleAidBtn.addEventListener("click", () => {
-      aidsVisible = !aidsVisible;
-
-      [safeFrame, crosshairX, crosshairY, cornerLabel].forEach(element => {
-        element.style.display = aidsVisible ? "block" : "none";
-      });
-
-      toggleAidBtn.classList.toggle("active", aidsVisible);
-      toggleAidBtn.textContent = aidsVisible ? "显示辅助线" : "隐藏辅助线";
-    });
 
     resizeCanvas();
     generateLayout();
