@@ -352,4 +352,765 @@
     .primary {
       border: none;
       border-radius: 18px;
-      padding: 14px
+      padding: 14px 16px;
+      color: #111;
+      background: linear-gradient(135deg, #f7f1dc, #e7c86f);
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 40px rgba(231, 200, 111, 0.18);
+    }
+
+    .secondary {
+      border: 1px solid var(--line-strong);
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.055);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .workbench {
+      min-width: 0;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .topbar, .bottombar {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(18, 19, 24, 0.58);
+      backdrop-filter: blur(18px);
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 18px 54px rgba(0, 0, 0, 0.18);
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .badge.gold {
+      color: var(--gold);
+      border-color: rgba(231, 200, 111, 0.3);
+      background: rgba(231, 200, 111, 0.07);
+    }
+
+    .stage {
+      min-height: 0;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(45deg, rgba(255,255,255,.045) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,.045) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255,255,255,.045) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,.045) 75%),
+        rgba(255,255,255,.026);
+      background-size: 28px 28px;
+      background-position: 0 0, 0 14px, 14px -14px, -14px 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      overflow: auto;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: fit-content;
+      height: fit-content;
+      max-width: 100%;
+      max-height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    canvas {
+      display: block;
+      max-width: min(72vw, 980px);
+      max-height: 74vh;
+      width: auto;
+      height: auto;
+      filter: drop-shadow(0 26px 60px rgba(0, 0, 0, 0.28));
+    }
+
+    .safe-frame {
+      pointer-events: none;
+      position: absolute;
+      inset: 8%;
+      border: 1px dashed rgba(231, 200, 111, 0.34);
+      border-radius: 2px;
+    }
+
+    .crosshair-x, .crosshair-y {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(157, 184, 255, 0.22);
+    }
+
+    .crosshair-x {
+      height: 1px;
+      left: 0;
+      right: 0;
+      top: 50%;
+    }
+
+    .crosshair-y {
+      width: 1px;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+    }
+
+    .corner-label {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.38);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: rgba(246,242,234,.66);
+      backdrop-filter: blur(10px);
+    }
+
+    .status-text {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .toggle-aid {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 11px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .toggle-aid.active {
+      color: #101113;
+      background: var(--text);
+      border-color: var(--text);
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .workbench {
+        height: auto;
+        min-height: 80vh;
+        padding: 16px;
+      }
+
+      canvas {
+        max-width: 88vw;
+        max-height: 68vh;
+      }
+
+      .topbar, .bottombar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="logo-mark">字</div>
+        <div>
+          <div class="eyebrow">Pure Frontend Tool</div>
+          <h1>文字排版生成器 V2</h1>
+        </div>
+      </div>
+
+      <p class="subtitle">输入中文、日文或英文文字，自动生成具有设计感的排版，并一键导出透明背景 PNG。</p>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>文本内容</strong>
+          <span class="mini-note">支持中 / 日 / 英混排</span>
+        </div>
+
+        <textarea id="textInput">紅頭船
+under the sun
+潮聲未遠</textarea>
+
+        <div class="chips">
+          <button class="chip" data-sample="紅頭船\nunder the sun\n潮聲未遠">红头船</button>
+          <button class="chip" data-sample="月落烏啼\n霜滿天\n江楓漁火">月落乌啼</button>
+          <button class="chip" data-sample="東京夜行\n雨の街\nsilent neon">東京夜行</button>
+          <button class="chip" data-sample="under the sun\nwe keep moving\nslowly">under the sun</button>
+          <button class="chip" data-sample="不要說話\n讓潮聲替我回答">不要说话</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>排版方向</strong>
+          <span class="mini-note">决定主要视觉流向</span>
+        </div>
+
+        <div class="segmented">
+          <button class="pill-btn active" data-direction="horizontal">横排</button>
+          <button class="pill-btn" data-direction="vertical">竖排</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>视觉风格</strong>
+          <span class="mini-note">点击卡片切换</span>
+        </div>
+
+        <div class="style-grid">
+          <div class="style-card active" data-style="minimal">
+            <div class="style-name">极简杂志感</div>
+            <div class="style-desc">留白多、层级清晰，适合高级标题和海报主视觉。</div>
+            <div class="style-preview preview-minimal">静默<br>版式<br>NO.01</div>
+          </div>
+
+          <div class="style-card" data-style="japanese">
+            <div class="style-name">日式海报感</div>
+            <div class="style-desc">适合中文 / 日文竖排，字距更舒展，气质安静。</div>
+            <div class="style-preview preview-japanese">潮聲未遠</div>
+          </div>
+
+          <div class="style-card" data-style="experimental">
+            <div class="style-name">实验字体感</div>
+            <div class="style-desc">字号反差、错位、透明叠加更明显，更像艺术字体实验。</div>
+            <div class="style-preview preview-experimental">
+              <span style="font-size:28px;left:2px;top:0">形</span>
+              <span style="font-size:14px;left:42px;top:8px;opacity:.55">变</span>
+              <span style="font-size:20px;left:18px;top:38px;opacity:.72">声</span>
+            </div>
+          </div>
+
+          <div class="style-card" data-style="poetic">
+            <div class="style-name">诗意留白感</div>
+            <div class="style-desc">文字更分散、更轻，适合短句、诗句、情绪化文案。</div>
+            <div class="style-preview preview-poetic">月<br>&nbsp;&nbsp;落<br>&nbsp;&nbsp;&nbsp;&nbsp;远</div>
+          </div>
+
+          <div class="style-card" data-style="surprise">
+            <div class="style-name">随机惊喜</div>
+            <div class="style-desc">每次从所有风格中随机挑选一套规则，适合快速找灵感。</div>
+            <div class="style-preview preview-experimental">
+              <span style="font-size:15px;right:6px;top:2px">?</span>
+              <span style="font-size:30px;right:25px;top:20px">字</span>
+              <span style="font-size:12px;right:2px;bottom:0">random</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>画布比例</strong>
+          <span class="mini-note">导出尺寸</span>
+        </div>
+
+        <select id="canvasSelect">
+          <option value="1:1">1:1 正方形 1080 × 1080</option>
+          <option value="4:5">4:5 海报 1080 × 1350</option>
+          <option value="9:16">9:16 竖屏 1080 × 1920</option>
+          <option value="16:9">16:9 横屏 1920 × 1080</option>
+        </select>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>颜色与透明度</strong>
+          <span class="mini-note">默认白色</span>
+        </div>
+
+        <div class="color-row">
+          <input type="color" id="colorPicker" value="#ffffff" />
+          <div class="color-code" id="colorValue">#ffffff</div>
+          <button class="reset-btn" id="resetColorBtn">重置</button>
+        </div>
+
+        <div class="range-row">
+          <div class="range-label">
+            <span>基础透明度</span>
+            <span id="opacityValue">0.92</span>
+          </div>
+          <input id="opacityRange" type="range" min="0.2" max="1" step="0.01" value="0.92" />
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <strong>随机强度</strong>
+          <span class="mini-note">越高越实验</span>
+        </div>
+
+        <div class="range-row">
+          <div class="range-label">
+            <span>模糊强度</span>
+            <span id="blurValue">1</span>
+          </div>
+          <input id="blurRange" type="range" min="0" max="10" step="1" value="1" />
+        </div>
+
+        <div class="range-row">
+          <div class="range-label">
+            <span>旋转强度</span>
+            <span id="rotationValue">3°</span>
+          </div>
+          <input id="rotationRange" type="range" min="0" max="28" step="1" value="3" />
+        </div>
+      </section>
+
+      <div class="aid-card">
+        <strong>排版逻辑</strong><br />
+        系统会自动调整字号、位置、字距、透明度、模糊和旋转角度。每次点击生成都会得到不同结果，但会尽量保持可读性和视觉平衡。
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="generateBtn">生成排版</button>
+        <button class="secondary" id="exportBtn">导出透明 PNG</button>
+      </div>
+    </aside>
+
+    <main class="workbench">
+      <div class="topbar">
+        <div class="badges">
+          <span class="badge gold" id="sizeBadge">1080 × 1080</span>
+          <span class="badge">透明背景导出</span>
+          <span class="badge">棋盘格仅预览</span>
+          <span class="badge" id="modeBadge">横排 · 极简杂志感</span>
+        </div>
+
+        <button class="toggle-aid active" id="toggleAidBtn">显示辅助线</button>
+      </div>
+
+      <section class="stage">
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="posterCanvas"></canvas>
+          <div class="safe-frame" id="safeFrame"></div>
+          <div class="crosshair-x" id="crosshairX"></div>
+          <div class="crosshair-y" id="crosshairY"></div>
+          <div class="corner-label" id="cornerLabel">安全边距 / 中心线</div>
+        </div>
+      </section>
+
+      <div class="bottombar">
+        <div class="status-text" id="statusText">准备就绪。输入文字后点击“生成排版”。</div>
+        <div class="status-text">导出的 PNG 不包含棋盘格、辅助线和网页 UI。</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("posterCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const textInput = document.getElementById("textInput");
+    const canvasSelect = document.getElementById("canvasSelect");
+    const colorPicker = document.getElementById("colorPicker");
+    const colorValue = document.getElementById("colorValue");
+    const resetColorBtn = document.getElementById("resetColorBtn");
+    const opacityRange = document.getElementById("opacityRange");
+    const opacityValue = document.getElementById("opacityValue");
+    const blurRange = document.getElementById("blurRange");
+    const blurValue = document.getElementById("blurValue");
+    const rotationRange = document.getElementById("rotationRange");
+    const rotationValue = document.getElementById("rotationValue");
+    const generateBtn = document.getElementById("generateBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const statusText = document.getElementById("statusText");
+    const sizeBadge = document.getElementById("sizeBadge");
+    const modeBadge = document.getElementById("modeBadge");
+    const toggleAidBtn = document.getElementById("toggleAidBtn");
+    const safeFrame = document.getElementById("safeFrame");
+    const crosshairX = document.getElementById("crosshairX");
+    const crosshairY = document.getElementById("crosshairY");
+    const cornerLabel = document.getElementById("cornerLabel");
+
+    let direction = "horizontal";
+    let selectedStyle = "minimal";
+    let currentLayout = [];
+    let aidsVisible = true;
+
+    const fontStacks = [
+      `"Songti SC", "Noto Serif SC", "SimSun", serif`,
+      `"Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif`,
+      `"PingFang SC", "Microsoft YaHei", sans-serif`,
+      `"Times New Roman", Georgia, serif`,
+      `"Helvetica Neue", Arial, sans-serif`
+    ];
+
+    const styleNames = {
+      minimal: "极简杂志感",
+      japanese: "日式海报感",
+      experimental: "实验字体感",
+      poetic: "诗意留白感",
+      surprise: "随机惊喜"
+    };
+
+    const styleProfiles = {
+      minimal: {
+        minSize: 34,
+        maxSize: 142,
+        opacityJitter: 0.15,
+        positionJitter: 0.13,
+        spacing: 1.12,
+        margin: 0.16
+      },
+      japanese: {
+        minSize: 38,
+        maxSize: 132,
+        opacityJitter: 0.24,
+        positionJitter: 0.22,
+        spacing: 1.42,
+        margin: 0.14
+      },
+      experimental: {
+        minSize: 22,
+        maxSize: 225,
+        opacityJitter: 0.45,
+        positionJitter: 0.48,
+        spacing: 0.92,
+        margin: 0.11
+      },
+      poetic: {
+        minSize: 28,
+        maxSize: 112,
+        opacityJitter: 0.34,
+        positionJitter: 0.42,
+        spacing: 1.68,
+        margin: 0.18
+      }
+    };
+
+    function random(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function hexToRgba(hex, alpha) {
+      const clean = hex.replace("#", "");
+      const bigint = parseInt(clean, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function getCanvasSize() {
+      const value = canvasSelect.value;
+
+      if (value === "1:1") return { width: 1080, height: 1080 };
+      if (value === "4:5") return { width: 1080, height: 1350 };
+      if (value === "9:16") return { width: 1080, height: 1920 };
+      if (value === "16:9") return { width: 1920, height: 1080 };
+
+      return { width: 1080, height: 1080 };
+    }
+
+    function resizeCanvas() {
+      const size = getCanvasSize();
+      canvas.width = size.width;
+      canvas.height = size.height;
+      sizeBadge.textContent = `${size.width} × ${size.height}`;
+    }
+
+    function getProfile() {
+      if (selectedStyle === "surprise") {
+        const keys = ["minimal", "japanese", "experimental", "poetic"];
+        return styleProfiles[pick(keys)];
+      }
+
+      return styleProfiles[selectedStyle];
+    }
+
+    function splitText(text) {
+      const lines = text
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const tokens = [];
+
+      lines.forEach(line => {
+        const hasEnglishWords = /[a-zA-Z]/.test(line) && /\s/.test(line);
+
+        if (hasEnglishWords) {
+          line.split(/\s+/).forEach(word => {
+            if (word.trim()) tokens.push(word.trim());
+          });
+        } else {
+          Array.from(line).forEach(char => {
+            if (char.trim()) tokens.push(char);
+          });
+        }
+
+        tokens.push("\n");
+      });
+
+      return tokens.filter((token, index) => !(token === "\n" && index === tokens.length - 1));
+    }
+
+    function createTextItem(token, x, y, profile) {
+      const baseOpacity = Number(opacityRange.value);
+      const blurMax = Number(blurRange.value);
+      const rotationMax = Number(rotationRange.value);
+
+      let fontSize = random(profile.minSize, profile.maxSize);
+
+      if (Math.random() > 0.86) {
+        fontSize *= random(1.25, 1.9);
+      }
+
+      if (token.length > 3) {
+        fontSize *= 0.72;
+      }
+
+      if (token.length > 8) {
+        fontSize *= 0.64;
+      }
+
+      const opacity = clamp(baseOpacity - random(0, profile.opacityJitter), 0.1, 1);
+      const rotation = random(-rotationMax, rotationMax) * Math.PI / 180;
+      const blur = Math.random() > 0.78 ? random(0, blurMax) : 0;
+
+      return {
+        text: token,
+        x,
+        y,
+        fontSize,
+        opacity,
+        rotation,
+        blur,
+        font: pick(fontStacks),
+        weight: Math.random() > 0.78 ? "700" : "400"
+      };
+    }
+
+    function generateHorizontal(tokens, profile) {
+      const items = [];
+      const marginX = canvas.width * profile.margin;
+      const marginY = canvas.height * profile.margin;
+
+      let x = marginX + random(-20, 80);
+      let y = random(marginY, canvas.height * 0.42);
+      let lineHeight = random(88, 178) * profile.spacing;
+
+      tokens.forEach(token => {
+        if (token === "\n" || x > canvas.width * (1 - profile.margin)) {
+          x = marginX + random(-45, 120);
+          y += lineHeight;
+          lineHeight = random(88, 178) * profile.spacing;
+          return;
+        }
+
+        const item = createTextItem(
+          token,
+          x + random(-88, 88) * profile.positionJitter,
+          y + random(-96, 96) * profile.positionJitter,
+          profile
+        );
+
+        items.push(item);
+
+        ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
+        x += ctx.measureText(token).width + random(20, 88);
+      });
+
+      return items;
+    }
+
+    function generateVertical(tokens, profile) {
+      const items = [];
+
+      let x = canvas.width * (1 - profile.margin - 0.05);
+      let y = canvas.height * profile.margin;
+      let columnGap = random(88, 152) * profile.spacing;
+
+      tokens.forEach(token => {
+        if (token === "\n" || y > canvas.height * (1 - profile.margin)) {
+          y = canvas.height * profile.margin + random(-28, 72);
+          x -= columnGap;
+          columnGap = random(88, 152) * profile.spacing;
+          return;
+        }
+
+        const item = createTextItem(
+          token,
+          x + random(-88, 88) * profile.positionJitter,
+          y + random(-88, 88) * profile.positionJitter,
+          profile
+        );
+
+        items.push(item);
+        y += item.fontSize * random(0.82, 1.24);
+      });
+
+      return items;
+    }
+
+    function drawLayout() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      currentLayout.forEach(item => {
+        ctx.save();
+
+        ctx.translate(item.x, item.y);
+        ctx.rotate(item.rotation);
+        ctx.globalAlpha = item.opacity;
+        ctx.fillStyle = hexToRgba(colorPicker.value, item.opacity);
+        ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
+        ctx.textBaseline = "top";
+        ctx.filter = item.blur > 0 ? `blur(${item.blur}px)` : "none";
+
+        ctx.fillText(item.text, 0, 0);
+        ctx.restore();
+      });
+    }
+
+    function updateModeBadge() {
+      modeBadge.textContent = `${direction === "horizontal" ? "横排" : "竖排"} · ${styleNames[selectedStyle]}`;
+    }
+
+    function generateLayout() {
+      const text = textInput.value.trim();
+
+      if (!text) {
+        statusText.textContent = "请先输入文字。";
+        return;
+      }
+
+      resizeCanvas();
+
+      const tokens = splitText(text).slice(0, 160);
+      const profile = getProfile();
+
+      currentLayout = direction === "vertical"
+        ? generateVertical(tokens, profile)
+        : generateHorizontal(tokens, profile);
+
+      drawLayout();
+      updateModeBadge();
+
+      statusText.textContent = `已生成 ${currentLayout.length} 个文字元素。可以继续点击“生成排版”刷新结果。`;
+    }
+
+    function exportPNG() {
+      const link = document.createElement("a");
+      link.download = "typography-layout-v2.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+
+      statusText.textContent = "已导出透明背景 PNG。";
+    }
+
+    document.querySelectorAll("[data-direction]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-direction]").forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        direction = button.dataset.direction;
+        generateLayout();
+      });
+    });
+
+    document.querySelectorAll("[data-style]").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll("[data-style]").forEach(item => item.classList.remove("active"));
+        card.classList.add("active");
+        selectedStyle = card.dataset.style;
+        generateLayout();
+      });
+    });
+
+    document.querySelectorAll("[data-sample]").forEach(chip => {
+      chip.addEventListener("click", () => {
+        textInput.value = chip.dataset.sample;
+        generateLayout();
+      });
+    });
+
+    colorPicker.addEventListener("input", () => {
+      colorValue.textContent = colorPicker.value;
+      drawLayout();
+    });
+
+    resetColorBtn.addEventListener("click", () => {
+      colorPicker.value = "#ffffff";
+      colorValue.textContent = "#ffffff";
+      drawLayout();
+    });
+
+    opacityRange.addEventListener("input", () => {
+      opacityValue.textContent = Number(opacityRange.value).toFixed(2);
+      generateLayout();
+    });
+
+    blurRange.addEventListener("input", () => {
+      blurValue.textContent = blurRange.value;
+    });
+
+    rotationRange.addEventListener("input", () => {
+      rotationValue.textContent = `${rotationRange.value}°`;
+    });
+
+    canvasSelect.addEventListener("change", generateLayout);
+    generateBtn.addEventListener("click", generateLayout);
+    exportBtn.addEventListener("click", exportPNG);
+
+    toggleAidBtn.addEventListener("click", () => {
+      aidsVisible = !aidsVisible;
+
+      [safeFrame, crosshairX, crosshairY, cornerLabel].forEach(element => {
+        element.style.display = aidsVisible ? "block" : "none";
+      });
+
+      toggleAidBtn.classList.toggle("active", aidsVisible);
+      toggleAidBtn.textContent = aidsVisible ? "显示辅助线" : "隐藏辅助线";
+    });
+
+    resizeCanvas();
+    generateLayout();
+  </script>
+</body>
+</html>
