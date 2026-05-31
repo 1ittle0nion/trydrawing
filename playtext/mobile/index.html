@@ -98,9 +98,17 @@
   textarea#text::placeholder{color:var(--muted-2)}
 
   .chiprow{
-    display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px;
+    display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;padding-bottom:10px;margin-bottom:4px;
     scrollbar-width:none;-ms-overflow-style:none;
+    -webkit-overflow-scrolling:touch;           /* iOS momentum */
+    overscroll-behavior-x:contain;              /* don't bounce the whole sheet */
+    touch-action:pan-x;                          /* hint: horizontal only */
+    scroll-snap-type:x proximity;
+    cursor:grab;
   }
+  .chiprow.dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+  .chiprow.dragging *{pointer-events:none}     /* suppress accidental taps mid-drag */
+  .chiprow > *{scroll-snap-align:start}
   .chiprow::-webkit-scrollbar{display:none}
   .grp{display:flex;gap:4px;background:var(--panel);padding:3px;border-radius:11px;border:1px solid var(--line);flex:0 0 auto}
   .grp button{
@@ -153,6 +161,7 @@
     background:var(--bg-2);border-radius:22px 22px 0 0;border-top:1px solid var(--line-2);
     transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.25,1);
     max-height:82%;overflow-y:auto;padding:8px 20px calc(26px + env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   }
   .sheet.show{transform:translateY(0)}
   .grab{width:38px;height:4px;border-radius:4px;background:var(--line-2);margin:8px auto 16px}
@@ -585,6 +594,52 @@ function wire(){
 function openSheet(){document.getElementById("sheet").classList.add("show");document.getElementById("backdrop").classList.add("show");}
 function closeSheet(){document.getElementById("sheet").classList.remove("show");document.getElementById("backdrop").classList.remove("show");}
 
+/* ---- drag-to-scroll for the horizontal chip row ----
+   Mobile: let native momentum scroll do its thing (don't hijack touch).
+   Mouse/pen: native overflow can't be dragged, so we implement grab-drag
+   with a little inertia, and swallow the click only if an actual drag happened. */
+function enableDragScroll(el){
+  let down=false,dragging=false,startX=0,startLeft=0,lastX=0,lastT=0,vel=0,raf=0;
+  const THRESH=5;
+  el.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="touch")return;            // native handles touch
+    down=true;dragging=false;startX=e.clientX;startLeft=el.scrollLeft;
+    lastX=e.clientX;lastT=performance.now();vel=0;cancelAnimationFrame(raf);
+  });
+  el.addEventListener("pointermove",e=>{
+    if(!down)return;
+    const dx=e.clientX-startX;
+    if(!dragging&&Math.abs(dx)<THRESH)return;
+    if(!dragging){dragging=true;el.classList.add("dragging");el.setPointerCapture(e.pointerId);}
+    el.scrollLeft=startLeft-dx;
+    const now=performance.now(),dt=now-lastT;
+    if(dt>0)vel=(e.clientX-lastX)/dt;            // px per ms
+    lastX=e.clientX;lastT=now;
+    e.preventDefault();
+  });
+  function release(){
+    if(!down)return;down=false;
+    if(dragging){
+      el.classList.remove("dragging");
+      let v=vel*16;                              // carry momentum (~1 frame)
+      const decay=()=>{ if(Math.abs(v)<0.4)return; el.scrollLeft-=v; v*=0.92; raf=requestAnimationFrame(decay); };
+      decay();
+      // block the click that pointerup would otherwise trigger on a chip
+      const kill=ev=>{ev.stopPropagation();ev.preventDefault();};
+      el.addEventListener("click",kill,{capture:true,once:true});
+      setTimeout(()=>el.removeEventListener("click",kill,true),0);
+    }
+    dragging=false;
+  }
+  el.addEventListener("pointerup",release);
+  el.addEventListener("pointercancel",release);
+  el.addEventListener("pointerleave",release);
+  // let vertical wheels / shift-wheel scroll horizontally too
+  el.addEventListener("wheel",e=>{
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){el.scrollLeft+=e.deltaY;e.preventDefault();}
+  },{passive:false});
+}
+
 /* ---- export ---- */
 function buildExport(){const t=document.createElement("canvas");render(t.getContext("2d"),state,state.scale);return t;}
 function exportPNG(){buildExport().toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="playtext_"+(state.text.replace(/\s+/g,"_").slice(0,14)||"art")+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);toast("已导出透明 PNG");},"image/png");}
@@ -592,7 +647,7 @@ function copyPNG(){buildExport().toBlob(async b=>{try{await navigator.clipboard.
 let tT;function toast(m){const t=document.getElementById("toast");document.getElementById("toastMsg").textContent=m;t.classList.add("show");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("show"),1900);}
 
 /* ---- init ---- */
-function init(){buildSheet();syncUI();wire();history=[snap()];hidx=0;updHist();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(preview);preview();}
+function init(){buildSheet();syncUI();wire();enableDragScroll(document.querySelector(".chiprow"));history=[snap()];hidx=0;updHist();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(preview);preview();}
 init();
 </script>
 </body>
