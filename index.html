@@ -1,40 +1,714 @@
-PURE FRONTEND TOOL
-Typography Layout Generator
-Input Chinese, Japanese or English text. Generate an aesthetic layout, then export it as a transparent PNG.
-TEXT
-紅頭船
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typography Layout Generator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f0f0f;
+      color: #f5f5f5;
+      display: flex;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .panel {
+      padding: 28px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      background: #111;
+      overflow-y: auto;
+    }
+
+    .preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      background: #181818;
+    }
+
+    .label-small {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 1.1;
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      background: #1b1b1b;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 20px;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: rgba(255,255,255,0.45);
+    }
+
+    .segmented,
+    .grid-options {
+      display: grid;
+      gap: 8px;
+    }
+
+    .segmented {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-options {
+      grid-template-columns: 1fr;
+    }
+
+    button,
+    select,
+    input[type="color"] {
+      font: inherit;
+    }
+
+    .option-btn {
+      background: #1b1b1b;
+      color: #ddd;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 12px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .option-btn:hover {
+      border-color: rgba(255,255,255,0.35);
+    }
+
+    .option-btn.active {
+      background: #f5f5f5;
+      color: #111;
+      border-color: #f5f5f5;
+    }
+
+    select {
+      width: 100%;
+      background: #1b1b1b;
+      color: #eee;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 12px;
+      padding: 12px;
+      outline: none;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="color"] {
+      width: 58px;
+      height: 42px;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .range-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    .hint {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #777;
+      margin-top: 8px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .primary {
+      background: #f4f4f4;
+      color: #111;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .secondary {
+      background: transparent;
+      color: #f4f4f4;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .canvas-shell {
+      padding: 18px;
+      border-radius: 22px;
+      background:
+        linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+        linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      background-color: #202020;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+    }
+
+    canvas {
+      display: block;
+      max-width: min(70vw, 780px);
+      max-height: 78vh;
+      width: auto;
+      height: auto;
+    }
+
+    .canvas-info {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        display: block;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+      }
+
+      .preview {
+        padding: 20px;
+      }
+
+      canvas {
+        max-width: 92vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="panel">
+      <div class="label-small">Pure Frontend Tool</div>
+      <h1>Typography Layout Generator</h1>
+      <p class="subtitle">
+        Input Chinese, Japanese or English text. Generate an aesthetic layout,
+        then export it as a transparent PNG.
+      </p>
+
+      <div class="section">
+        <div class="label-small">Text</div>
+        <textarea id="textInput">紅頭船
 under the sun
-潮聲未遠
-DIRECTION
-Horizontal
-Vertical
-STYLE
-              Minimal Editorial
-              Japanese Poster
-              Experimental
-              Poetic Layout
-              Surprise Me
-            
-CANVAS
-              1:1 1080
-              4:5 1080
-              9:16 1080
-              16:9 1920
-            
-TEXT COLOUR
+潮聲未遠</textarea>
+      </div>
 
-Base opacity: 0.92
+      <div class="section">
+        <div class="label-small">Direction</div>
+        <div class="segmented">
+          <button class="option-btn active" data-direction="horizontal">Horizontal</button>
+          <button class="option-btn" data-direction="vertical">Vertical</button>
+        </div>
+      </div>
 
+      <div class="section">
+        <div class="label-small">Style</div>
+        <select id="styleSelect">
+          <option value="minimal">Minimal Editorial</option>
+          <option value="japanese">Japanese Poster</option>
+          <option value="experimental">Experimental</option>
+          <option value="poetic">Poetic Layout</option>
+          <option value="surprise">Surprise Me</option>
+        </select>
+      </div>
 
+      <div class="section">
+        <div class="label-small">Canvas</div>
+        <select id="canvasSelect">
+          <option value="1:1">1:1 1080</option>
+          <option value="4:5">4:5 1080</option>
+          <option value="9:16">9:16 1080</option>
+          <option value="16:9">16:9 1920</option>
+        </select>
+      </div>
 
+      <div class="section">
+        <div class="label-small">Text Colour</div>
+        <div class="color-row">
+          <input type="color" id="colorPicker" value="#ffffff" />
+          <span id="colorValue">#ffffff</span>
+        </div>
+      </div>
 
+      <div class="section">
+        <div class="range-label">
+          <span>Base opacity</span>
+          <span id="opacityValue">0.92</span>
+        </div>
+        <input id="opacityRange" type="range" min="0.2" max="1" step="0.01" value="0.92" />
+      </div>
 
+      <div class="section">
+        <div class="label-small">Randomness Controls</div>
 
-RANDOMNESS CONTROLS
-BLUR
-ROTATION
-Keep these low for clean editorial typography, or raise them for experimental poster effects.
-Generate Layout
-Export Transparent PNG
+        <div class="range-label">
+          <span>Blur</span>
+          <span id="blurValue">1</span>
+        </div>
+        <input id="blurRange" type="range" min="0" max="8" step="1" value="1" />
 
-1080 × 1080 px · transparent PNG export · checkerboard is preview only
+        <div class="range-label" style="margin-top:14px;">
+          <span>Rotation</span>
+          <span id="rotationValue">3°</span>
+        </div>
+        <input id="rotationRange" type="range" min="0" max="24" step="1" value="3" />
+
+        <div class="hint">
+          Keep these low for clean editorial typography, or raise them for experimental poster effects.
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="generateBtn">Generate Layout</button>
+        <button class="secondary" id="exportBtn">Export Transparent PNG</button>
+      </div>
+
+      <div class="hint" id="statusText" style="margin-top:16px;">
+        Ready.
+      </div>
+    </aside>
+
+    <main class="preview">
+      <div>
+        <div class="canvas-shell">
+          <canvas id="posterCanvas"></canvas>
+        </div>
+        <div class="canvas-info" id="canvasInfo">
+          1080 × 1080 px · transparent PNG export · checkerboard is preview only
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("posterCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const textInput = document.getElementById("textInput");
+    const styleSelect = document.getElementById("styleSelect");
+    const canvasSelect = document.getElementById("canvasSelect");
+    const colorPicker = document.getElementById("colorPicker");
+    const colorValue = document.getElementById("colorValue");
+
+    const opacityRange = document.getElementById("opacityRange");
+    const opacityValue = document.getElementById("opacityValue");
+
+    const blurRange = document.getElementById("blurRange");
+    const blurValue = document.getElementById("blurValue");
+
+    const rotationRange = document.getElementById("rotationRange");
+    const rotationValue = document.getElementById("rotationValue");
+
+    const generateBtn = document.getElementById("generateBtn");
+    const exportBtn = document.getElementById("exportBtn");
+    const canvasInfo = document.getElementById("canvasInfo");
+    const statusText = document.getElementById("statusText");
+
+    let direction = "horizontal";
+    let currentLayout = [];
+
+    const fontStacks = [
+      `"Noto Serif SC", "Songti SC", "SimSun", serif`,
+      `"Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif`,
+      `"Times New Roman", "Georgia", serif`,
+      `"Helvetica Neue", Arial, sans-serif`,
+      `"Arial Narrow", Arial, sans-serif`
+    ];
+
+    const styleProfiles = {
+      minimal: {
+        minSize: 34,
+        maxSize: 140,
+        opacityJitter: 0.18,
+        positionJitter: 0.15,
+        scaleContrast: 0.45,
+        spacing: 1.1
+      },
+      japanese: {
+        minSize: 38,
+        maxSize: 128,
+        opacityJitter: 0.25,
+        positionJitter: 0.2,
+        scaleContrast: 0.55,
+        spacing: 1.35
+      },
+      experimental: {
+        minSize: 24,
+        maxSize: 220,
+        opacityJitter: 0.45,
+        positionJitter: 0.45,
+        scaleContrast: 0.85,
+        spacing: 0.95
+      },
+      poetic: {
+        minSize: 28,
+        maxSize: 110,
+        opacityJitter: 0.35,
+        positionJitter: 0.38,
+        scaleContrast: 0.5,
+        spacing: 1.6
+      }
+    };
+
+    function random(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function randomInt(min, max) {
+      return Math.floor(random(min, max + 1));
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function hexToRgba(hex, alpha) {
+      const clean = hex.replace("#", "");
+      const bigint = parseInt(clean, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function getCanvasSize() {
+      const value = canvasSelect.value;
+
+      if (value === "1:1") return { width: 1080, height: 1080 };
+      if (value === "4:5") return { width: 1080, height: 1350 };
+      if (value === "9:16") return { width: 1080, height: 1920 };
+      if (value === "16:9") return { width: 1920, height: 1080 };
+
+      return { width: 1080, height: 1080 };
+    }
+
+    function resizeCanvas() {
+      const size = getCanvasSize();
+      canvas.width = size.width;
+      canvas.height = size.height;
+      canvasInfo.textContent =
+        `${size.width} × ${size.height} px · transparent PNG export · checkerboard is preview only`;
+    }
+
+    function getProfile() {
+      const selected = styleSelect.value;
+
+      if (selected === "surprise") {
+        const keys = Object.keys(styleProfiles);
+        return styleProfiles[pick(keys)];
+      }
+
+      return styleProfiles[selected];
+    }
+
+    function splitText(text) {
+      const lines = text
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const tokens = [];
+
+      lines.forEach(line => {
+        const hasSpaces = /\s/.test(line);
+
+        if (hasSpaces && /[a-zA-Z]/.test(line)) {
+          line.split(/\s+/).forEach(word => {
+            if (word.trim()) tokens.push(word.trim());
+          });
+        } else {
+          Array.from(line).forEach(char => {
+            if (char.trim()) tokens.push(char);
+          });
+        }
+
+        tokens.push("\n");
+      });
+
+      return tokens.filter((token, index) => {
+        return !(token === "\n" && index === tokens.length - 1);
+      });
+    }
+
+    function createTextItem(token, x, y, profile, index, total) {
+      const baseOpacity = Number(opacityRange.value);
+      const blurMax = Number(blurRange.value);
+      const rotationMax = Number(rotationRange.value);
+
+      const emphasisChance = Math.random();
+      let fontSize = random(profile.minSize, profile.maxSize);
+
+      if (emphasisChance > 0.86) {
+        fontSize *= random(1.3, 1.9);
+      }
+
+      if (token.length > 3) {
+        fontSize *= 0.72;
+      }
+
+      const opacity = clamp(
+        baseOpacity - random(0, profile.opacityJitter),
+        0.12,
+        1
+      );
+
+      const rotation = random(-rotationMax, rotationMax) * Math.PI / 180;
+      const blur = Math.random() > 0.75 ? random(0, blurMax) : 0;
+
+      return {
+        text: token,
+        x,
+        y,
+        fontSize,
+        opacity,
+        rotation,
+        blur,
+        font: pick(fontStacks),
+        weight: Math.random() > 0.75 ? "700" : "400"
+      };
+    }
+
+    function generateHorizontal(tokens, profile) {
+      const items = [];
+      const marginX = canvas.width * 0.12;
+      const marginY = canvas.height * 0.16;
+
+      let x = marginX;
+      let y = random(marginY, canvas.height * 0.45);
+      let lineHeight = random(90, 180) * profile.spacing;
+
+      tokens.forEach((token, index) => {
+        if (token === "\n" || x > canvas.width * 0.82) {
+          x = marginX + random(-50, 120);
+          y += lineHeight;
+          lineHeight = random(90, 180) * profile.spacing;
+          return;
+        }
+
+        const jitterX = random(-80, 80) * profile.positionJitter;
+        const jitterY = random(-90, 90) * profile.positionJitter;
+
+        const item = createTextItem(
+          token,
+          x + jitterX,
+          y + jitterY,
+          profile,
+          index,
+          tokens.length
+        );
+
+        items.push(item);
+
+        ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
+        const measured = ctx.measureText(token).width;
+        x += measured + random(20, 90);
+      });
+
+      return items;
+    }
+
+    function generateVertical(tokens, profile) {
+      const items = [];
+      const marginX = canvas.width * 0.78;
+      const marginY = canvas.height * 0.12;
+
+      let x = marginX;
+      let y = marginY;
+      let columnGap = random(90, 150) * profile.spacing;
+
+      tokens.forEach((token, index) => {
+        if (token === "\n" || y > canvas.height * 0.84) {
+          y = marginY + random(-30, 80);
+          x -= columnGap;
+          columnGap = random(90, 150) * profile.spacing;
+          return;
+        }
+
+        const jitterX = random(-80, 80) * profile.positionJitter;
+        const jitterY = random(-80, 80) * profile.positionJitter;
+
+        const item = createTextItem(
+          token,
+          x + jitterX,
+          y + jitterY,
+          profile,
+          index,
+          tokens.length
+        );
+
+        items.push(item);
+
+        y += item.fontSize * random(0.85, 1.25);
+      });
+
+      return items;
+    }
+
+    function drawLayout() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      currentLayout.forEach(item => {
+        ctx.save();
+
+        ctx.translate(item.x, item.y);
+        ctx.rotate(item.rotation);
+
+        ctx.globalAlpha = item.opacity;
+        ctx.fillStyle = hexToRgba(colorPicker.value, item.opacity);
+        ctx.font = `${item.weight} ${item.fontSize}px ${item.font}`;
+        ctx.textBaseline = "top";
+
+        ctx.filter = item.blur > 0 ? `blur(${item.blur}px)` : "none";
+
+        ctx.fillText(item.text, 0, 0);
+
+        ctx.restore();
+      });
+    }
+
+    function generateLayout() {
+      const text = textInput.value.trim();
+
+      if (!text) {
+        statusText.textContent = "Please enter some text first.";
+        return;
+      }
+
+      resizeCanvas();
+
+      const tokens = splitText(text).slice(0, 140);
+      const profile = getProfile();
+
+      currentLayout =
+        direction === "vertical"
+          ? generateVertical(tokens, profile)
+          : generateHorizontal(tokens, profile);
+
+      drawLayout();
+      statusText.textContent = "Layout generated.";
+    }
+
+    function exportPNG() {
+      const link = document.createElement("a");
+      link.download = "typography-layout.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    document.querySelectorAll("[data-direction]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-direction]").forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+        direction = button.dataset.direction;
+        generateLayout();
+      });
+    });
+
+    colorPicker.addEventListener("input", () => {
+      colorValue.textContent = colorPicker.value;
+      drawLayout();
+    });
+
+    opacityRange.addEventListener("input", () => {
+      opacityValue.textContent = Number(opacityRange.value).toFixed(2);
+      generateLayout();
+    });
+
+    blurRange.addEventListener("input", () => {
+      blurValue.textContent = blurRange.value;
+    });
+
+    rotationRange.addEventListener("input", () => {
+      rotationValue.textContent = `${rotationRange.value}°`;
+    });
+
+    canvasSelect.addEventListener("change", generateLayout);
+    styleSelect.addEventListener("change", generateLayout);
+    generateBtn.addEventListener("click", generateLayout);
+    exportBtn.addEventListener("click", exportPNG);
+
+    resizeCanvas();
+    generateLayout();
+  </script>
+</body>
+</html>
